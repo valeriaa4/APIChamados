@@ -1,20 +1,22 @@
-﻿namespace APIChamados.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace APIChamados.Models
 {
     public class Tecnico : Usuario
     {
+        [Required]
         public string Senha { get; set; }
+        [Required]
         public bool Administrador { get; set; }
+        [Required]
         public DateTime DataContratacao { get; set; }
-        public List<Chamado>? ChamadosAbertos { get; set; }
-        public List<Chamado>? ChamadosFinalizados { get; set; }
+        public Tecnico() { }
 
-        public Tecnico(int id, string nome, string email, int telefone, string senha, bool administrador, DateTime dataContratacao) : base(id, nome, email, telefone)
+        public Tecnico(string nome, string email, string telefone, string senha, bool administrador, DateTime dataContratacao) : base(nome, email, telefone)
         {
             this.Senha = senha;
             this.Administrador = administrador;
             this.DataContratacao = dataContratacao;
-            this.ChamadosAbertos = new List<Chamado>();
-            this.ChamadosFinalizados = new List<Chamado>();
         }
     }
 }

@@ -4,15 +4,15 @@ using System.Text.Json.Serialization;
 
 namespace APIChamados.Models
 {
-    public class Solucao
+    public class Interacao
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int IdSolucao { get; set; }
+        public int IdInteracao { get; set; }
         [Required]
-        public string Descricao { get; set; }
+        public DateTime DataInteracao { get; set; }
         [Required]
-        public DateTime DataSolucao { get; set; }
+        public string Resposta { get; set; }
 
         [Required]
         [ForeignKey("idChamado")]
@@ -20,13 +20,13 @@ namespace APIChamados.Models
         [JsonIgnore]
         public Chamado Chamado { get; set; }
 
-        public Solucao() { }
+        public Interacao() { }
 
-        public Solucao(int idChamado, string descricao, DateTime dataSolucao)
+        public Interacao (int idChamado, DateTime dataInteracao, string resposta)
         {
             this.IdChamado = idChamado;
-            this.Descricao = descricao;
-            this.DataSolucao = dataSolucao;
+            this.DataInteracao = dataInteracao;
+            this.Resposta = resposta;
         }
     }
 }

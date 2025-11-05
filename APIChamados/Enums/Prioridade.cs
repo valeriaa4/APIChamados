@@ -4,7 +4,6 @@
     {
         Baixa,
         Media,
-        Alta,
-        Urgente
+        Alta
     }
 }
