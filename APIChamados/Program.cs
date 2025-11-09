@@ -2,6 +2,7 @@ using APIChamados.Data;
 using APIChamados.Repositories;
 using APIChamados.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddRazorPages(); 
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+var apiKey = builder.Configuration["OpenAI:ApiKey"];
 
 builder.Services.AddCors(options =>
 {
@@ -25,6 +28,12 @@ builder.Services.AddDbContext<ApplicationDBContext.AppDbContext>(options =>
         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
     )
 );
+builder.Services.AddHttpClient("OpenAI", client =>
+{
+    client.BaseAddress = new Uri("https://api.openai.com/v1/");
+    client.DefaultRequestHeaders.Authorization =
+        new AuthenticationHeaderValue("Bearer", apiKey);
+});
 builder.Services.AddScoped<ITecnicoRepository, TecnicoRepository>();
 builder.Services.AddScoped<TecnicoService>();
 builder.Services.AddScoped<IChamadoRepository, ChamadoRepository>();
@@ -35,6 +44,7 @@ builder.Services.AddScoped<IInteracaoRepository, InteracaoRepository>();
 builder.Services.AddScoped<InteracaoService>();
 builder.Services.AddScoped<ISolucaoRepository, SolucaoRepository>();
 builder.Services.AddScoped<SolucaoService>();
+builder.Services.AddScoped<ChatAiHttpService>();
 
 var app = builder.Build();
 

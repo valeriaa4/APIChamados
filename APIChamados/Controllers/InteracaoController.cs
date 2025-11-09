@@ -3,7 +3,6 @@ using APIChamados.Models;
 using APIChamados.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
-using System.Globalization;
 
 namespace APIChamados.Controllers
 {

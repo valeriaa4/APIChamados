@@ -32,6 +32,7 @@ namespace APIChamados.Repositories
             if (chamado != null)
             {
                 chamado.HistoricoInteracoes.Add(interacao);
+                chamado.Status = Status.EmAndamento;
                 await _context.SaveChangesAsync();
             }
 

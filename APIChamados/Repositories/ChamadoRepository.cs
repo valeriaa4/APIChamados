@@ -1,6 +1,7 @@
 ﻿using APIChamados.Dtos;
 using APIChamados.Enums;
 using APIChamados.Models;
+using APIChamados.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using static APIChamados.Data.ApplicationDBContext;
@@ -10,15 +11,22 @@ namespace APIChamados.Repositories
     public class ChamadoRepository : IChamadoRepository
     {
         private readonly AppDbContext _context;
+        private readonly ChatAiHttpService _chat;
 
-        public ChamadoRepository(AppDbContext context)
+        public ChamadoRepository(AppDbContext context, ChatAiHttpService chat)
         {
             _context = context;
+            _chat = chat;
         }
 
         public async Task<IEnumerable<Chamado>> GetAllAsync()
         {
-            return await _context.Chamados.ToListAsync();
+            return await _context.Chamados
+                .Include(c => c.Usuario)
+                .Include(c => c.Tecnico)
+                .Include(c => c.Solucao)
+                .Include(c => c.HistoricoInteracoes)
+                .ToListAsync();
         }
 
         public async Task<Chamado?> GetByIdAsync(int id)
@@ -67,16 +75,18 @@ namespace APIChamados.Repositories
         {
 
             var newProtocolo = await GerarProtocoloAsync();
+            var tecnico = await SelecionarTecnicoAsync();
+            var (titulo, prioridade) = await _chat.GerarTituloEPrioridadeAsync(chamadoDto.Descricao);
             var chamado = new Chamado
             {
                 IdUsuario = chamadoDto.IdUsuario,
-                IdTecnico = chamadoDto.IdTecnico,
+                IdTecnico = tecnico,
                 Protocolo = newProtocolo,
-                Titulo = chamadoDto.Titulo,
+                Titulo = titulo,
                 Descricao = chamadoDto.Descricao,
                 DataAbertura = DateTime.Now,
-                Status = chamadoDto.Status,
-                Prioridade = chamadoDto.Prioridade
+                Status = 0,
+                Prioridade = prioridade
             };
             _context.Chamados.Add(chamado);
             await _context.SaveChangesAsync();
@@ -154,6 +164,29 @@ namespace APIChamados.Repositories
                 fallback++;
             }
             return fallback;
+        }
+
+        private async Task<int> SelecionarTecnicoAsync()
+        {
+            // Seleciona técnico com base no rodízio
+            var tecnicos = await _context.Tecnicos.ToListAsync();
+            if (!tecnicos.Any())
+                throw new Exception("Nenhum técnico cadastrado.");
+
+            // Busca o último chamado e decide quem é o próximo técnico
+            var ultimoChamado = await _context.Chamados
+                .OrderByDescending(c => c.IdChamado)
+                .FirstOrDefaultAsync();
+
+            int proximoIndice = 0;
+            if (ultimoChamado != null)
+            {
+                var ultimoTecIndex = tecnicos.FindIndex(t => t.Id == ultimoChamado.IdTecnico);
+                proximoIndice = (ultimoTecIndex + 1) % tecnicos.Count;
+            }
+
+            var tecnicoSelecionado = tecnicos[proximoIndice];
+            return tecnicoSelecionado.Id;
         }
 
         public async Task<Interacao> AddInteracaoAsync(int chamadoId, Interacao interacao)
