@@ -45,6 +45,13 @@ namespace APIChamados.Controllers
             return new OkObjectResult(chamado);
         }
 
+        [HttpGet("tecnico/{id}")]
+        public async Task<IActionResult> GetByTecnicoAsync(int id)
+        {
+            var chamados = await _chamadoService.GetChamadosByTecnicoAsync(id);
+            return new OkObjectResult(chamados);
+        }
+
         [HttpGet("prioridade/{prioridade}")]
         public async Task<IActionResult> GetByPrioridadeAsync(int prioridade)
         {

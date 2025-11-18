@@ -8,6 +8,7 @@ namespace APIChamados.Repositories
         Task<IEnumerable<Chamado>> GetAllAsync();
         Task<Chamado?> GetByIdAsync(int id);
         Task<Chamado?> GetByProtocoloAsync(int protocolo);
+        Task<IEnumerable<Chamado?>> GetByTecnicoAsync(int id);
         Task<IEnumerable<Chamado?>> GetByPrioridadeAsync(int prioridade);
         Task<IEnumerable<Chamado?>> GetByStatusAsync(int status);
         Task<Chamado> AddAsync(ChamadoDto chamadoDto);

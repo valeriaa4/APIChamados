@@ -30,6 +30,11 @@ namespace APIChamados.Services
             return await _chamadoRepository.GetByIdAsync(id);
         }
 
+        public async Task<IEnumerable<Chamado?>> GetChamadosByTecnicoAsync(int id)
+        {
+            return await _chamadoRepository.GetByTecnicoAsync(id);
+        }
+
         public async Task<IEnumerable<Chamado?>> GetChamadosByPrioridadeAsync(int prioridade)
         {
             return await _chamadoRepository.GetByPrioridadeAsync(prioridade);

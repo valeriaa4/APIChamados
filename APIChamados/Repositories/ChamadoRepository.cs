@@ -39,6 +39,17 @@ namespace APIChamados.Repositories
                 .FirstOrDefaultAsync(c => c.IdChamado == id);
         }
 
+        public async Task<IEnumerable<Chamado>> GetByTecnicoAsync(int id)
+        {
+            return await _context.Chamados
+                .Include(c => c.Usuario)
+                .Include(c => c.Tecnico)
+                .Include(c => c.Solucao)
+                .Include(c => c.HistoricoInteracoes)
+                .Where(c => c.IdTecnico == id)
+                .ToListAsync();
+        }
+
         public async Task<Chamado?> GetByProtocoloAsync(int protocolo)
         {
             return await _context.Chamados

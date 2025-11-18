@@ -47,7 +47,7 @@ namespace APIChamados.Controllers
             try
             {
                 var tecnico = await _tecnicoService.GetByEmailAndSenhaAsync(loginDto.Email, loginDto.Senha);
-                return new OkObjectResult(true);
+                return new OkObjectResult(tecnico);
             }
             catch (ArgumentException ex)
             {
