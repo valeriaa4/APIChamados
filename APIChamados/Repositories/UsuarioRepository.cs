@@ -53,6 +53,11 @@ namespace APIChamados.Repositories
             return usuario;
         }
 
+        public async Task<Usuario> GetByEmailAsync(string email)
+        {
+            return await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+        }
+
         public async Task DeleteAsync(int id)
         {
             var usuario = await _context.Usuarios.FindAsync(id);

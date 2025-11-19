@@ -22,6 +22,11 @@ namespace APIChamados.Services
             return await _usuarioRepository.GetByIdAsync(id);
         }
 
+        public async Task<Usuario> GetUsuarioByEmailAsync(string email)
+        {
+            return await _usuarioRepository.GetByEmailAsync(email);
+        }
+
         public async Task<Usuario> AddUsuarioAsync(Usuario usuario)
         {
             return await _usuarioRepository.AddAsync(usuario);

@@ -34,6 +34,17 @@ namespace APIChamados.Controllers
             return new OkObjectResult(usuario);
         }
 
+        [HttpGet("email/{email}")]
+        public async Task<IActionResult> GetByEmailAsync(string email)
+        {
+            var usuario = await _usuarioService.GetUsuarioByEmailAsync(email);
+            if (usuario == null)
+            {
+                return new NotFoundResult();
+            }
+            return new OkObjectResult(usuario);
+        }
+
         [HttpPost]
         public async Task<Usuario> CreateAsync([FromBody] Usuario usuario)
         {
